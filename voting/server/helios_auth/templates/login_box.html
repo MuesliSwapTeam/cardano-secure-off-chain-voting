@@ -1,0 +1,52 @@
+{% if default_auth_system %}
+<p>
+  <a class="small button" href='{% url "auth@start" system_name=default_auth_system %}?return_url={{return_url}}'
+    >Log in</a
+  >
+</p>
+{% else %} {% for auth_system in enabled_auth_systems %} {% ifequal auth_system "wallet" %} Login with Cardano Wallet
+<p>
+  <script>
+    async function loginWithWallet(walletId) {
+
+      function ascii_to_hexa(str) {
+        var arr1 = [];
+        for (var n = 0, l = str.length; n < l; n++) {
+          var hex = Number(str.charCodeAt(n)).toString(16);
+          arr1.push(hex);
+        }
+        return arr1.join('');
+      }
+
+      // Data to be signed as challenge
+      const data = 'time:' + Date.now().toString()
+      const as_hex = ascii_to_hexa(data)
+
+      // Connect to wallet. E.g. walletId = 'eternl'
+      const w = await window.cardano[walletId].enable()
+
+      // Let wallet sign some trash data
+      const addresses = await w.getUsedAddresses()
+      const signedData = await w.signData(addresses[0], as_hex)
+
+      // Update the URL in browser, this will also load the page as if clicking on a link
+      window.location.href = `{{SECURE_URL_HOST}}{% url "auth@start" system_name=auth_system %}?return_url=/&challenge=${data}&challenge_result=${signedData.signature}&challenge_key=${signedData.key}&addr=${addresses[0]}`
+    }
+  </script>
+  <button type="submit" onclick="loginWithWallet('eternl')">{{auth_system}}</button>
+  <a
+    >Ignore
+    <!--
+    <a href="{{SECURE_URL_HOST}}{% url "auth@start" system_name=auth_system %}?return_url={{return_url}}" style="font-size: 1.4em;"> {{auth_system}}
+    </a>
+     -->
+    {% else %}
+    <p>
+      <a href="{{SECURE_URL_HOST}}{% url "auth@start" system_name=auth_system %}?return_url={{return_url}}"
+      style="font-size: 1.4em;">
+      <img style="height: 35px; border: 0px" src="/static/auth/login-icons/{{auth_system}}.png" alt="{{auth_system}}" />
+      {{auth_system}} {% endifequal %}
+    </p></a
+  >
+</p>
+{% endfor %} {% endif %}
