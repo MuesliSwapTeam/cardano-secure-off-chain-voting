@@ -159,10 +159,9 @@ class Election(HeliosModel):
       }
 
   # snapshot results
-  @property
-  def snapshot(self):
-    query = VoterSnapshot.objects.filter(election=self)
-    return [
+  def snapshot(self, skh):
+    query = VoterSnapshot.objects.filter(election=self, skh=skh)
+    res = [
       {
         'addr': q.address,
         'pkh': q.pkh,
@@ -171,6 +170,7 @@ class Election(HeliosModel):
       }
       for q in query
     ]
+    return res[0] if len(res) > 0 else {'quantity': 0}
 
   @property
   def pretty_type(self):
@@ -430,7 +430,10 @@ class Election(HeliosModel):
     """
     tally = self.init_tally()
     for voter in self.voter_set.exclude(vote=None):
-      tally.add_vote(voter.vote, verify_p=False)
+      # TODO: replace with voter's real pkh, skh
+      voter_weight = self.snapshot(voter.user.user_skh)['quantity']
+      if voter_weight != 0:
+        tally.add_vote(voter.vote, voter_weight, verify_p=False)
 
     self.encrypted_tally = tally
     self.save()    
@@ -907,7 +910,7 @@ class Voter(HeliosModel):
   @transaction.atomic
   def register_user_in_election(cls, user, election):
     voter_uuid = str(uuid.uuid4())
-    voter = Voter(uuid= voter_uuid, user = user, election = election)
+    voter = Voter(uuid= voter_uuid, user=user, election=election)
 
     # do we need to generate an alias?
     if election.use_voter_aliases:

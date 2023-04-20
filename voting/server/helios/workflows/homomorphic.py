@@ -303,13 +303,14 @@ class Tally(WorkflowObject):
     for vote in encrypted_votes:
       self.add_vote(vote, verify_p)
     
-  def add_vote(self, encrypted_vote, verify_p=True):
+  def add_vote(self, encrypted_vote, weight, verify_p=True):
     # do we verify?
     if verify_p:
       if not encrypted_vote.verify(self.election):
         raise Exception('Bad Vote')
 
     # for each question
+    weight_sum = 0
     for question_num in range(len(self.questions)):
       question = self.questions[question_num]
       answers = question['answers']
@@ -319,9 +320,25 @@ class Tally(WorkflowObject):
         # do the homomorphic addition into the tally
         enc_vote_choice = encrypted_vote.encrypted_answers[question_num].choices[answer_num]
         enc_vote_choice.pk = self.public_key
-        self.tally[question_num][answer_num] = encrypted_vote.encrypted_answers[question_num].choices[answer_num] * self.tally[question_num][answer_num]
+        self.tally[question_num][answer_num] = self.add_weight(
+          encrypted_vote.encrypted_answers[question_num].choices[answer_num],
+          weight
+        ) * self.tally[question_num][answer_num]
+        weight_sum += weight
+    self.num_tallied += weight_sum
 
-    self.num_tallied += 1
+  # from https://github.com/anarvote/helios_lib/blob/dc1107d53578be807773c15e331f0553a0c591b8/helios_lib/workflows/homomorphic.py#L359
+  def add_weight(self, vote_value, weight):
+    def memul(m):
+      return m * m
+
+    m = vote_value
+    s = m if int(format(weight, 'b')[-1]) else 0
+    for bit in format(weight, 'b')[:-1][::-1]:
+      m = memul(m)
+      if int(bit):
+        s = m if (type(s) == int and s == 0) else s * m
+    return s 
 
   def decryption_factors_and_proofs(self, sk):
     """

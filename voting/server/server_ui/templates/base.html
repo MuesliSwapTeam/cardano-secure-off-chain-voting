@@ -34,7 +34,7 @@
     <ul class="title-area">
       <!-- Title Area -->
       <li class="name">
-        <h1><a href="/"><img src="/static/tinylogo.png"></a></h1>
+        <h1><a href="/"><img src="/static/icon.png" style="width: 40px;"></a></h1>
       </li>
       <li class="toggle-topbar menu-icon"><a href="#" onclick="$('nav').toggleClass('expanded'); return false;"><span>Menu</span></a>
       </li>
@@ -47,27 +47,12 @@
 	<li><a href="{% url "stats@home" %}">Admin</a></li>
 	<li class="divider"></li>
 	{% endif %}
-	{% if not settings.MASTER_HELIOS %}
-	<li><a href="http://heliosvoting.org">About Helios</a></li>
-	{% endif %}
       </ul>
       
       <ul>
         <li><a href="/">{{settings.SITE_TITLE}}</a></li>
-	{% if settings.MASTER_HELIOS %}
         <li class="divider"></li>
-        <li class="active"><a href="/about">About</a></li>
-        <li class="divider"></li>
-        <li><a target="_new" href="https://github.com/benadida/helios-server">Code</a></li>
-        <li class="divider"></li>
-        <li><a href="/docs">Docs</a></li>
-        <li class="divider"></li>
-        <li><a href="/faq">FAQ</a></li>
-        <li class="divider"></li>
-        <li><a href="/privacy">Privacy</a></li>
-	{% endif %}
-        <li class="divider"></li>
-        <li><a href="mailto:{{settings.HELP_EMAIL_ADDRESS}}">Help!</a></li>
+        <li><a href="docs.muesliswap.com">Get started</a></li>
       </ul>
     </section>
   </nav>
@@ -96,7 +81,7 @@
     You are signed in as voter <u>{% if voter.alias %}{{voter.alias}}{% else %}{{voter.name}}{% endif %}</u> in election <u>{{voter.election.name}}</u>. [<a href="{{settings.SECURE_URL_HOST}}{% url "auth@logout" %}?return_url={{CURRENT_URL}}">sign out</a>]
     {% else %}
 {% if settings.SHOW_LOGIN_OPTIONS %}
-    not logged in. <a class="tiny button" href="{{settings.SECURE_URL_HOST}}{% url "auth@index" %}?return_url={{CURRENT_URL}}">log in</a>
+    Not logged in at the moment!
 {% else %}
 powered by <a href="http://heliosvoting.org">Helios Voting</a>.
 {% endif %}

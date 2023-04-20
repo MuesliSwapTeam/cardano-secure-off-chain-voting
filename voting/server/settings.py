@@ -30,7 +30,7 @@ else:
 MANAGERS = ADMINS
 
 # is this the master Helios web site?
-MASTER_HELIOS = (get_from_env('MASTER_HELIOS', '0') == '1')
+MASTER_HELIOS = False # (get_from_env('MASTER_HELIOS', '0') == '1')
 
 # show ability to log in? (for example, if the site is mostly used by voters)
 # if turned off, the admin will need to know to go to /auth/login manually
@@ -199,15 +199,15 @@ URL_HOST = get_from_env("URL_HOST", "http://localhost:8000").rstrip("/")
 SECURE_URL_HOST = get_from_env("SECURE_URL_HOST", URL_HOST).rstrip("/")
 
 # election stuff
-SITE_TITLE = get_from_env('SITE_TITLE', 'Helios Voting')
-MAIN_LOGO_URL = get_from_env('MAIN_LOGO_URL', '/static/logo.png')
+SITE_TITLE = get_from_env('SITE_TITLE', 'MuesliSwap Voting Platform')
+MAIN_LOGO_URL = get_from_env('MAIN_LOGO_URL', '/static/muesliswap_logo.png')
 ALLOW_ELECTION_INFO_URL = (get_from_env('ALLOW_ELECTION_INFO_URL', '0') == '1')
 
 # FOOTER links
 FOOTER_LINKS = json.loads(get_from_env('FOOTER_LINKS', '[]'))
 FOOTER_LOGO_URL = get_from_env('FOOTER_LOGO_URL', None)
 
-WELCOME_MESSAGE = get_from_env('WELCOME_MESSAGE', "This is the default message")
+WELCOME_MESSAGE = get_from_env('WELCOME_MESSAGE', "Welcome to the MuesliSwap Voting Platform")
 
 HELP_EMAIL_ADDRESS = get_from_env('HELP_EMAiL_ADDRESS', 'help@heliosvoting.org')
 
@@ -223,7 +223,7 @@ HELIOS_PRIVATE_DEFAULT = False
 # authentication systems enabled
 # AUTH_ENABLED_SYSTEMS = ['password','facebook','twitter', 'google', 'yahoo']
 AUTH_ENABLED_SYSTEMS = get_from_env('AUTH_ENABLED_SYSTEMS',
-                                    get_from_env('AUTH_ENABLED_AUTH_SYSTEMS', 'wallet,google')
+                                    get_from_env('AUTH_ENABLED_AUTH_SYSTEMS', 'wallet')
                                     ).split(",")
 AUTH_DEFAULT_SYSTEM = get_from_env('AUTH_DEFAULT_SYSTEM', get_from_env('AUTH_DEFAULT_AUTH_SYSTEM', None))
 

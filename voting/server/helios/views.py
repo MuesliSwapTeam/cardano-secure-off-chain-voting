@@ -291,10 +291,10 @@ def one_election_meta(request, election):
 
 @election_view()
 @return_json
-def one_election_snapshot(request, election):
+def one_election_snapshot(request, election, pkh, skh):
   if not election:
     raise Http404
-  return election.snapshot
+  return election.snapshot(skh)
 
 @election_view()
 def election_badge(request, election):
@@ -317,7 +317,12 @@ def one_election_view(request, election):
   election_badge_url = get_election_badge_url(election)
   status_update_message = None
 
-  vote_url = "%s/booth/vote.html?%s" % (settings.SECURE_URL_HOST, urlencode({'election_url' : reverse(url_names.election.ELECTION_HOME, args=[election.uuid])}))
+  vote_url = "%s/booth/vote.html?%s&pkh=%s&skh=%s" % (
+    settings.SECURE_URL_HOST,
+    urlencode({'election_url' : reverse(url_names.election.ELECTION_HOME, args=[election.uuid])}),
+    request.session['pkh'] if 'pkh' in request.session else '',
+    request.session['skh'] if 'skh' in request.session else ''
+  )
 
   test_cookie_url = "%s?%s" % (reverse(url_names.COOKIE_TEST), urlencode({'continue_url' : vote_url}))
   

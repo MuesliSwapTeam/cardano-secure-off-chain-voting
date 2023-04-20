@@ -371,18 +371,20 @@ BOOTH.show_encryption_message_before = function(func_to_execute) {
     func_to_execute();
 };
 
-BOOTH.load_and_setup_election = function(election_url) {
+BOOTH.load_and_setup_election = function(election_url, pkh, skh) {
     // the hash will be computed within the setup function call now
     $.get(election_url, function(raw_json) {
         // let's also get the metadata
         $.getJSON(election_url + "/meta", {}, function(election_metadata) {
-          BOOTH.election_metadata = election_metadata;
-          BOOTH.setup_election(raw_json, election_metadata);
-          BOOTH.show_election();
-          BOOTH.election_url = election_url;
+            $.getJSON(election_url + "/snapshot/" + pkh + "/" + skh, {}, function(snapshot_data) {
+                BOOTH.election_metadata = election_metadata;
+                BOOTH.setup_election(raw_json, election_metadata);
+                BOOTH.show_election();
+                BOOTH.election_url = election_url;
+                BOOTH.snapshot_data = snapshot_data;
+            });
         });
     });
-
 
     if (USE_SJCL) {
       // get more randomness from server
@@ -413,7 +415,10 @@ BOOTH.so_lets_go = function () {
 
     // election URL
     var election_url = $.query.get('election_url');
-    BOOTH.load_and_setup_election(election_url);
+    var pkh = $.query.get('pkh');
+    var skh = $.query.get('skh');
+    BOOTH.load_and_setup_election(election_url, pkh, skh);
+    console.log(BOOTH)
 };
 
 BOOTH.nojava = function() {
@@ -473,6 +478,7 @@ BOOTH._after_ballot_encryption = function() {
         'election_hash' : BOOTH.election_hash,
         'election': BOOTH.election,
         'election_metadata': BOOTH.election_metadata,
+        'snapshot_data': BOOTH.snapshot_data,
         'questions' : BOOTH.election.questions,
         'choices' : BALLOT.pretty_choices(BOOTH.election, BOOTH.ballot)});
       BOOTH.show($('#seal_div'));

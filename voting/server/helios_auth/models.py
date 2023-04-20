@@ -19,6 +19,9 @@ class AuthenticationExpired(Exception):
 class User(models.Model):
   user_type = models.CharField(max_length=50)
   user_id = models.CharField(max_length=100)
+
+  user_pkh = models.CharField(max_length=100, null=True)
+  user_skh = models.CharField(max_length=100, null=True)
     
   name = models.CharField(max_length=200, null=True)
   
@@ -48,8 +51,14 @@ class User(models.Model):
     return cls.objects.get(user_type = user_type, user_id = user_id)
   
   @classmethod
-  def update_or_create(cls, user_type, user_id, name=None, info=None, token=None):
-    obj, created_p = cls.objects.get_or_create(user_type = user_type, user_id = user_id, defaults = {'name': name, 'info':info, 'token':token})
+  def update_or_create(cls, user_type, user_id, pkh, skh, name=None, info=None, token=None):
+    obj, created_p = cls.objects.get_or_create(
+      user_type=user_type,
+      user_id=user_id,
+      user_pkh=pkh,
+      user_skh=skh,
+      defaults={'name': name, 'info':info, 'token':token}
+    )
     
     if not created_p:
       # special case the password: don't replace it if it exists

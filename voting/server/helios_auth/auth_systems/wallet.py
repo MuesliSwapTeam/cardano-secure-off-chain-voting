@@ -13,6 +13,8 @@ from django.core.mail import send_mail
 
 from helios_auth import utils
 
+import hashlib
+
 # some parameters to indicate that status updating is not possible
 STATUS_UPDATES = False
 
@@ -23,11 +25,19 @@ def get_auth_url(request, redirect_url):
   return "/"
 
 def get_user_info_after_auth(request):
-  # TODO: get user info from cardano wallet
-  user_id = request.session['challenge_key']
+  addr_str = request.session['pkh'] + '.' + request.session['skh']
+  user_id = hashlib.sha256(addr_str.encode('utf-8')).hexdigest()
   user_name = user_id[:10]
   user_email = 'mock@mail.com'
-  return {'type' : 'wallet', 'user_id': user_id, 'name': user_name , 'info': {'email': user_email}, 'token':{}}
+  return {
+    'type' : 'wallet',
+    'user_id': user_id,
+    'pkh': request.session['pkh'],
+    'skh': request.session['skh'],
+    'name': user_name,
+    'info': {'email': user_email},
+    'token':{}
+  }
     
 def do_logout(user):
   """

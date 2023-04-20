@@ -4,7 +4,7 @@
     >Log in</a
   >
 </p>
-{% else %} {% for auth_system in enabled_auth_systems %} {% ifequal auth_system "wallet" %} Login with Cardano Wallet
+{% else %} {% for auth_system in enabled_auth_systems %} {% ifequal auth_system "wallet" %} 
 <p>
   <script>
     async function loginWithWallet(walletId) {
@@ -30,23 +30,24 @@
       const signedData = await w.signData(addresses[0], as_hex)
 
       // Update the URL in browser, this will also load the page as if clicking on a link
-      window.location.href = `{{SECURE_URL_HOST}}{% url "auth@start" system_name=auth_system %}?return_url=/&challenge=${data}&challenge_result=${signedData.signature}&challenge_key=${signedData.key}&addr=${addresses[0]}`
+      window.location.href = `{{SECURE_URL_HOST}}{% url "auth@start" system_name=auth_system %}?return_url=/&challenge=${data}&challenge_result=${signedData.signature}&challenge_key=${signedData.key}&hex_addr=${addresses[0]}`
     }
   </script>
-  <button type="submit" onclick="loginWithWallet('eternl')">{{auth_system}}</button>
-  <a
+  <button type="submit" onclick="loginWithWallet('eternl')">Connect Eternl</button>
+  <button type="submit" onclick="loginWithWallet('nami')">Connect Nami</button>
+
+  <!-- a
     >Ignore
-    <!--
+    <!#--
     <a href="{{SECURE_URL_HOST}}{% url "auth@start" system_name=auth_system %}?return_url={{return_url}}" style="font-size: 1.4em;"> {{auth_system}}
     </a>
-     -->
+     --#>
     {% else %}
     <p>
       <a href="{{SECURE_URL_HOST}}{% url "auth@start" system_name=auth_system %}?return_url={{return_url}}"
       style="font-size: 1.4em;">
       <img style="height: 35px; border: 0px" src="/static/auth/login-icons/{{auth_system}}.png" alt="{{auth_system}}" />
       {{auth_system}} {% endifequal %}
-    </p></a
-  >
+    </p></a -->
 </p>
 {% endfor %} {% endif %}

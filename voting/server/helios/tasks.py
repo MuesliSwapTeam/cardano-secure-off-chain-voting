@@ -168,7 +168,7 @@ def do_holder_snapshot(election_id):
             item = VoterSnapshot(
                 election=election,
                 address=h.address,
-                pkh='' if addr is None else addr.stakekeyhash,
+                pkh='' if addr is None else addr.pubkeyhash,
                 skh='' if addr is None else addr.stakekeyhash,
                 token_quantity=int(h.quantity)
             )

@@ -24,6 +24,8 @@ from helios_auth.auth_systems import wallet
 from pycardano.cip.cip8 import verify
 import time
 
+from cardano_python_utils.util import ShelleyAddress
+
 CHALLENGE_TIMEOUT = 300 # seconds
 
 
@@ -157,10 +159,12 @@ def _do_auth(request):
       'signature': request.session['challenge_result'],
       'key': request.session['challenge_key']
     })
+    sign_addr = ShelleyAddress.from_bech32(str(verification['signing_address']))
     wallet_success = (
       verification['verified']
         and verification['message'] == request.session['challenge']
-#        and verification['signing_address'] == request.session['addr']
+        and sign_addr.pubkeyhash == request.session['pkh']
+        and sign_addr.stakekeyhash == request.session['skh']
         and abs(int(verification['message'].split(':')[-1]) / 1000 - time.time()) < CHALLENGE_TIMEOUT
     )
     if wallet_success:
@@ -188,7 +192,9 @@ def start(request, system_name):
   request.session['challenge']= request.GET.get('challenge', '/')
   request.session['challenge_result'] = request.GET.get('challenge_result', '/')
   request.session['challenge_key'] = request.GET.get('challenge_key', '/')
-  request.session['addr'] = request.GET.get('addr', '/')
+  addr = ShelleyAddress.from_hex(request.GET.get('hex_addr', '/'))
+  request.session['pkh'] = addr.pubkeyhash
+  request.session['skh'] = addr.stakekeyhash
 
   return _do_auth(request)
 
@@ -211,7 +217,7 @@ def after(request):
 
   if user:
     # get the user and store any new data about him
-    user_obj = User.update_or_create(user['type'], user['user_id'], user['name'], user['info'], user['token'])
+    user_obj = User.update_or_create(user['type'], user['user_id'], user['pkh'], user['skh'], user['name'], user['info'], user['token'])
     
     request.session['user'] = user
   else:

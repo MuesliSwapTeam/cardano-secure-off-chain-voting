@@ -16,8 +16,8 @@ urlpatterns = [
     # metadata that need not be verified
     url(r'^/meta$', views.one_election_meta, name=names.ELECTION_META),
 
-    # snapshot results, if availabla
-    url(r'^/snapshot$', views.one_election_snapshot, name=names.ELECTION_SNAPSHOT),
+    # snapshot results, if available
+    url(r'^/snapshot/(?P<pkh>[^/]+)/(?P<skh>[^/]+)$', views.one_election_snapshot, name=names.ELECTION_SNAPSHOT),
     
     # edit election params
     url(r'^/edit$', views.one_election_edit, name=names.ELECTION_EDIT),
