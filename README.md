@@ -3,7 +3,7 @@ A platform (we interface, backend services, and election library) for performing
 
 This is the github repository for our Project Catalyst Fund 9 project: https://cardano.ideascale.com/c/idea/422741.
 
-For the version hosted by MuesliSwap as their governance platform, visit [vote.muesliswap.com](vote.muesliswap.com).
+For the version hosted by MuesliSwap as their governance platform, visit [vote.muesliswap.com](https://vote.muesliswap.com).
 
 Note that this system is implemented on top of [Helios](https://www.heliosvoting.org). For details on the underlying cryptographic methods, we refer to their [documentation](https://www.heliosvoting.org/docs).
 
