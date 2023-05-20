@@ -33,8 +33,10 @@
       window.location.href = `{{SECURE_URL_HOST}}{% url "auth@start" system_name=auth_system %}?return_url=/&challenge=${data}&challenge_result=${signedData.signature}&challenge_key=${signedData.key}&hex_addr=${addresses[0]}`
     }
   </script>
-  <button type="submit" onclick="loginWithWallet('eternl')">Connect Eternl</button>
-  <button type="submit" onclick="loginWithWallet('nami')">Connect Nami</button>
+  <button type="submit" style="width: 200px" onclick="loginWithWallet('eternl')">Connect Eternl</button>
+  <button type="submit" style="width: 200px" onclick="loginWithWallet('nami')">Connect Nami</button>
+  <button type="submit" style="width: 200px" onclick="loginWithWallet('lace')">Connect Flint</button>
+  <button type="submit" style="width: 200px" onclick="loginWithWallet('lace')">Connect Lace</button>
 
   <!-- a
     >Ignore

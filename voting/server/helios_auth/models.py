@@ -11,6 +11,10 @@ from django.db import models
 from .auth_systems import can_check_constraint, AUTH_SYSTEMS
 from .jsonfield import JSONField
 
+import json
+from settings import ADMIN_WHITELIST_PATH
+from cardano_python_utils.util import ShelleyAddress
+
 
 # an exception to catch when a user is no longer authenticated
 class AuthenticationExpired(Exception):
@@ -52,11 +56,16 @@ class User(models.Model):
   
   @classmethod
   def update_or_create(cls, user_type, user_id, pkh, skh, name=None, info=None, token=None):
+    with open(ADMIN_WHITELIST_PATH, 'r') as f:
+      admins = json.load(f)
+    user_addr = ShelleyAddress(pubkeyhash=pkh, stakekeyhash=skh, mainnet=True).bech32
+
     obj, created_p = cls.objects.get_or_create(
       user_type=user_type,
       user_id=user_id,
       user_pkh=pkh,
       user_skh=skh,
+      admin_p=user_addr in admins,
       defaults={'name': name, 'info':info, 'token':token}
     )
     
@@ -171,8 +180,7 @@ class User(models.Model):
     else:
       name_display = self.pretty_name
 
-    return """<img class="%s-logo" src="/static/auth/login-icons/%s.png" alt="%s" /> %s""" % (
-      size, self.user_type, self.user_type, name_display)
+    return name_display[:16] + "..."
 
   @property
   def display_html_small(self):

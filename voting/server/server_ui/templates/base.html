@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="/static/foundation-tweaks.css">
   <link rel="stylesheet" href="/static/main.css">
 
-{% if settings.DEBUG %}  
   <script src="/static/foundation/js/vendor/custom.modernizr.js"></script>
   <script language="javascript" src="/static/helios/js/jquery-1.4.2.min.js"></script>
   <script language="javascript" src="/static/helios/js/jquery-ui-1.8.1.custom.min.js"></script>
@@ -19,9 +18,18 @@
   <script language="javascript" src="/static/helios/helios/jquery.json.min.js"></script>
   <script language="javascript" src="/static/foundation/js/foundation.min.js"></script>
 
-{% else %}
-<script language="javascript" src="/static/20140302-helios-combined.js"></script>
-{% endif %}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="prefetch"
+    as="style"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+  />
+
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  </noscript>
   
   {% block js %}
   {% endblock %}
@@ -30,17 +38,17 @@
 </head>
 <body>
   <div class="wrapper">
-  <nav class="top-bar">
+  <nav style="background: rgb(12, 22, 41);" class="top-bar">
     <ul class="title-area">
       <!-- Title Area -->
       <li class="name">
-        <h1><a href="/"><img src="/static/icon.png" style="width: 40px;"></a></h1>
+        <h1><a href="/"><img src="/static/icon.png" style="height: 32px;"></a></h1>
       </li>
       <li class="toggle-topbar menu-icon"><a href="#" onclick="$('nav').toggleClass('expanded'); return false;"><span>Menu</span></a>
       </li>
     </ul>
  
-    <section class="top-bar-section">
+    <section class="top-bar-section" >
       <!-- Right Nav Section -->
       <ul class="right">
 	{% if user and user.admin_p %}
@@ -49,10 +57,10 @@
 	{% endif %}
       </ul>
       
-      <ul>
-        <li><a href="/">{{settings.SITE_TITLE}}</a></li>
+      <ul >
+        <li><a style="background: rgb(12, 22, 41);" href="/">{{settings.SITE_TITLE}}</a></li>
         <li class="divider"></li>
-        <li><a href="docs.muesliswap.com">Get started</a></li>
+        <li><a style="background: rgb(12, 22, 41);" href="https://docs.muesliswap.com" target="_blank">Get started</a></li>
       </ul>
     </section>
   </nav>
@@ -74,7 +82,7 @@
       {% endif %}
     </span>-->
     {% if user %}
-    logged in as <b>{{user.display_html_small|safe}}</b>&nbsp;&nbsp;
+    You are currently logged in with your wallet 
     <a class="tiny button" href="{% url "auth@logout" %}?return_url={{CURRENT_URL}}">logout</a><br />
     {% else %}
     {% if voter %}

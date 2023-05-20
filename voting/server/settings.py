@@ -1,20 +1,17 @@
-
 # a massive hack to see if we're testing, in which case we use different settings
 import sys
-
 import json
 import os
+from decouple import config
 
 #TESTING = 'test' in sys.argv
 TESTING = True
 
 # go through environment variables and override them
 def get_from_env(var, default):
-#    if not TESTING and var in os.environ:
     if var in os.environ:
-        return os.environ[var]
-    else:
-        return default
+        default = os.environ[var]
+    return config(var, default)
 
 DEBUG = (get_from_env('DEBUG', '1') == '1')
 
@@ -213,9 +210,9 @@ HELP_EMAIL_ADDRESS = get_from_env('HELP_EMAiL_ADDRESS', 'help@heliosvoting.org')
 
 AUTH_TEMPLATE_BASE = "server_ui/templates/base.html"
 HELIOS_TEMPLATE_BASE = "server_ui/templates/base.html"
-HELIOS_ADMIN_ONLY = False
-HELIOS_VOTERS_UPLOAD = True
-HELIOS_VOTERS_EMAIL = True
+HELIOS_ADMIN_ONLY = True
+HELIOS_VOTERS_UPLOAD = False
+HELIOS_VOTERS_EMAIL = False
 
 # are elections private by default?
 HELIOS_PRIVATE_DEFAULT = False
@@ -301,3 +298,4 @@ if ROLLBAR_ACCESS_TOKEN:
   }
 
 BLOCKFROST_API_KEY = get_from_env('BLOCKFROST_API_KEY', '')
+ADMIN_WHITELIST_PATH = get_from_env('ADMIN_WHITELIST_PATH', '')

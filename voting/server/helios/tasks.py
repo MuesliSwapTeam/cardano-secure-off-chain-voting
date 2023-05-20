@@ -15,10 +15,13 @@ from .view_utils import render_template_raw
 import blockfrost
 from cardano_python_utils.util import ShelleyAddress
 
+import urllib.request, json 
 from settings import BLOCKFROST_API_KEY
 
 BF = blockfrost.BlockFrostApi(BLOCKFROST_API_KEY)
-SAMPLE_ASSET = '8a1cfae21368b8bebbbed9800fec304e95cce39a2a57dc35e2e3ebaa4d494c4b'
+MILK_POLICY_ID = '8a1cfae21368b8bebbbed9800fec304e95cce39a2a57dc35e2e3ebaa'
+MILK_TOKEN_NAME_HEX = '4d494c4b'
+MILK_STAKERS_ENDPOINT = "http://staking.muesliswap.com/milk-stakers"
 
 
 @shared_task
@@ -152,25 +155,38 @@ def election_notify_admin(election_id, subject, body):
 
 @shared_task
 def do_holder_snapshot(election_id):
-    election = Election.objects.get(id=election_id)
+    token_amounts = dict()
     i = 1
     while True:
-        holders = BF.asset_addresses(asset=SAMPLE_ASSET, page=i)
+        holders = BF.asset_addresses(asset=MILK_POLICY_ID+MILK_TOKEN_NAME_HEX, page=i)
         if len(holders) == 0:
             break
         for h in holders:
-            addr = None
             if not (h.address.startswith('Ae2') or h.address.startswith('DdzFF')):
                 try:
                     addr = ShelleyAddress.from_bech32(h.address)
+                    if addr.stakekeyhash in token_amounts:
+                        token_amounts[addr.stakekeyhash] += int(h.quantity)
+                    else:
+                        token_amounts[addr.stakekeyhash] = int(h.quantity)
                 except NotImplementedError:
                     print("Error decoding address", h.address)
-            item = VoterSnapshot(
-                election=election,
-                address=h.address,
-                pkh='' if addr is None else addr.pubkeyhash,
-                skh='' if addr is None else addr.stakekeyhash,
-                token_quantity=int(h.quantity)
-            )
-            item.save()
         i += 1
+
+    with urllib.request.urlopen(MILK_STAKERS_ENDPOINT) as req:
+        stakes = json.load(req)
+    
+    for stake in stakes:
+        if stake["skh"] in token_amounts:
+            token_amounts[stake["skh"]] += int(stake["amount_staked"])
+        else:
+            token_amounts[stake["skh"]] = int(stake["amount_staked"])
+
+    election = Election.objects.get(id=election_id)
+    for skh, amount in token_amounts.items():
+        item = VoterSnapshot(
+            election=election,
+            skh=skh,
+            token_quantity=amount
+        )
+        item.save()

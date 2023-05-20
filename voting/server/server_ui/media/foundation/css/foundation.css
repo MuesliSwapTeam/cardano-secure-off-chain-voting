@@ -1044,17 +1044,19 @@ p,
 blockquote,
 th,
 td {
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
   direction: ltr; }
 
 /* Default Link Styles */
 a {
-  color: #2ba6cb;
+  color: #5346ff;
   text-decoration: none;
   line-height: inherit; }
   a:hover, a:focus {
-    color: #2795b6; }
+    color: #5346ff; }
   a img {
     border: none; }
 
@@ -1319,8 +1321,8 @@ blockquote p {
   .show-for-print {
     display: inherit !important; } }
 button, .button {
-  border-style: solid;
-  border-width: 1px;
+  border-style: none;
+  border-radius: 8px;
   cursor: pointer;
   font-family: inherit;
   font-weight: bold;
@@ -1335,11 +1337,11 @@ button, .button {
   padding-bottom: 0.8125em;
   padding-left: 1.5em;
   font-size: 1em;
-  background-color: #2ba6cb;
-  border-color: #2284a1;
+  background-color: rgb(83, 70, 255);
+  border-color: rgb(33, 18, 218);
   color: white; }
   button:hover, button:focus, .button:hover, .button:focus {
-    background-color: #2284a1; }
+    background-color: #6b5fff; }
   button:hover, button:focus, .button:hover, .button:focus {
     color: white; }
   button.secondary, .button.secondary {
@@ -1395,8 +1397,8 @@ button, .button {
     text-align: right;
     padding-right: 0.75em; }
   button.disabled, button[disabled], .button.disabled, .button[disabled] {
-    background-color: #2ba6cb;
-    border-color: #2284a1;
+    background-color: grey;
+    border-color: grey;
     color: white;
     cursor: default;
     opacity: 0.6;
@@ -1407,7 +1409,7 @@ button, .button {
     button.disabled:hover, button.disabled:focus, button[disabled]:hover, button[disabled]:focus, .button.disabled:hover, .button.disabled:focus, .button[disabled]:hover, .button[disabled]:focus {
       color: white; }
     button.disabled:hover, button.disabled:focus, button[disabled]:hover, button[disabled]:focus, .button.disabled:hover, .button.disabled:focus, .button[disabled]:hover, .button[disabled]:focus {
-      background-color: #2ba6cb; }
+      background-color: grey; }
     button.disabled.secondary, button[disabled].secondary, .button.disabled.secondary, .button[disabled].secondary {
       background-color: #e9e9e9;
       border-color: #d0d0d0;
@@ -2816,6 +2818,7 @@ label.error {
   .no-js .section-container > section > .title, .no-js .section-container > .section > .title {
     border-top: none; }
 
+
 /* Wrapped around .top-bar to contain to grid width */
 .contain-to-grid {
   width: 100%;
@@ -2847,7 +2850,7 @@ label.error {
   height: 45px;
   line-height: 45px;
   position: relative;
-  background: #111111;
+  background: #2c3346;
   margin-bottom: 0; }
   .top-bar ul {
     margin-bottom: 0;
@@ -2956,7 +2959,7 @@ label.error {
     font-weight: bold;
     background: white; }
     .top-bar-section ul li > a.button {
-      background: #2ba6cb;
+      background: #0c1629;
       font-size: 0.8125em;
       padding-right: 15px;
       padding-left: 15px; }
@@ -2975,7 +2978,7 @@ label.error {
       .top-bar-section ul li > a.button.alert:hover {
         background: #970b0e; }
   .top-bar-section ul li:hover > a {
-    background: black;
+    background: #2c3346;
     color: white; }
   .top-bar-section ul li.active > a {
     background: #090909;
@@ -3082,14 +3085,14 @@ label.error {
         .top-bar-section ul li .js-generated {
           display: none; }
     .top-bar-section li.hover > a:not(.button) {
-      background: black;
+      background: #2c3346;
       color: white; }
     .top-bar-section li a:not(.button) {
       padding: 0 15px;
       line-height: 45px;
       background: #111111; }
       .top-bar-section li a:not(.button):hover {
-        background: black; }
+        background: #2c3346; }
     .top-bar-section .has-dropdown > a {
       padding-right: 35px !important; }
       .top-bar-section .has-dropdown > a:after {
@@ -4162,6 +4165,7 @@ ul.pagination {
 /* Panels */
 .panel {
   border-style: solid;
+  border-radius: 8px;
   border-width: 1px;
   border-color: #d9d9d9;
   margin-bottom: 1.25em;

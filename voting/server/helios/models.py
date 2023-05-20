@@ -76,7 +76,7 @@ class Election(HeliosModel):
   openreg = models.BooleanField(default=False)
   
   # featured election?
-  featured_p = models.BooleanField(default=False)
+  featured_p = models.BooleanField(default=True)
     
   # voter aliases?
   use_voter_aliases = models.BooleanField(default=False)
@@ -163,8 +163,6 @@ class Election(HeliosModel):
     query = VoterSnapshot.objects.filter(election=self, skh=skh)
     res = [
       {
-        'addr': q.address,
-        'pkh': q.pkh,
         'skh': q.skh,
         'quantity': q.token_quantity
       }
@@ -430,7 +428,6 @@ class Election(HeliosModel):
     """
     tally = self.init_tally()
     for voter in self.voter_set.exclude(vote=None):
-      # TODO: replace with voter's real pkh, skh
       voter_weight = self.snapshot(voter.user.user_skh)['quantity']
       if voter_weight != 0:
         tally.add_vote(voter.vote, voter_weight, verify_p=False)
@@ -572,23 +569,24 @@ class Election(HeliosModel):
     thus a helios-based trustee
     :type params: Cryptosystem
     """
-    # FIXME: generate the keypair
-    keypair = params.generate_keypair()
-
-    # create the trustee
-    trustee = Trustee(election = self)
-    trustee.uuid = str(uuid.uuid4())
-    trustee.name = settings.DEFAULT_FROM_NAME
-    trustee.email = settings.DEFAULT_FROM_EMAIL
-    trustee.public_key = keypair.pk
-    trustee.secret_key = keypair.sk
-    
-    # FIXME: is this at the right level of abstraction?
-    trustee.public_key_hash = datatypes.LDObject.instantiate(trustee.public_key, datatype='legacy/EGPublicKey').hash
-
-    trustee.pok = trustee.secret_key.prove_sk(algs.DLog_challenge_generator)
-
-    trustee.save()
+    # commented out since we don't want a default (helios) trustee
+#    # FIXME: generate the keypair
+#    keypair = params.generate_keypair()
+#
+#    # create the trustee
+#    trustee = Trustee(election = self)
+#    trustee.uuid = str(uuid.uuid4())
+#    trustee.name = settings.DEFAULT_FROM_NAME
+#    trustee.email = settings.DEFAULT_FROM_EMAIL
+#    trustee.public_key = keypair.pk
+#    trustee.secret_key = keypair.sk
+#    
+#    # FIXME: is this at the right level of abstraction?
+#    trustee.public_key_hash = datatypes.LDObject.instantiate(trustee.public_key, datatype='legacy/EGPublicKey').hash
+#
+#    trustee.pok = trustee.secret_key.prove_sk(algs.DLog_challenge_generator)
+#
+#    trustee.save()
 
   def get_helios_trustee(self):
     trustees_with_sk = self.trustee_set.exclude(secret_key = None)
@@ -740,8 +738,6 @@ class VoterSnapshot(models.Model):
   A model to store a snapshot of token holders
   """
   election = models.ForeignKey(Election, on_delete=models.CASCADE)
-  address = models.CharField(max_length=200, null=True)
-  pkh = models.CharField(max_length=200, null=True)
   skh = models.CharField(max_length=200, null=True)
   token_quantity = models.IntegerField(null=True)
 

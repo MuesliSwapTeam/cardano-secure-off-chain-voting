@@ -15,6 +15,8 @@ from helios_auth import utils
 
 import hashlib
 
+from cardano_python_utils.util import ShelleyAddress
+
 # some parameters to indicate that status updating is not possible
 STATUS_UPDATES = False
 
@@ -25,17 +27,16 @@ def get_auth_url(request, redirect_url):
   return "/"
 
 def get_user_info_after_auth(request):
-  addr_str = request.session['pkh'] + '.' + request.session['skh']
+  addr_str = ShelleyAddress(pubkeyhash=request.session['pkh'], stakekeyhash=request.session['skh'], mainnet=True).bech32
   user_id = hashlib.sha256(addr_str.encode('utf-8')).hexdigest()
-  user_name = user_id[:10]
-  user_email = 'mock@mail.com'
+  user_name = addr_str
   return {
     'type' : 'wallet',
     'user_id': user_id,
     'pkh': request.session['pkh'],
     'skh': request.session['skh'],
     'name': user_name,
-    'info': {'email': user_email},
+    'info': {},
     'token':{}
   }
     

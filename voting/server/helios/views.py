@@ -291,7 +291,7 @@ def one_election_meta(request, election):
 
 @election_view()
 @return_json
-def one_election_snapshot(request, election, pkh, skh):
+def one_election_snapshot(request, election, skh):
   if not election:
     raise Http404
   return election.snapshot(skh)
@@ -360,12 +360,33 @@ def one_election_view(request, election):
   # should we show the result?
   show_result = election.result_released_at or (election.result and admin_p)
 
+
+  if election.eligibility:
+    auth_systems = [e['auth_system'] for e in election.eligibility]
+  else:
+    auth_systems = None
+
+  password_only = False
+
+  if auth_systems is None or 'password' in auth_systems:
+    show_password = True
+    password_login_form = forms.VoterPasswordForm()
+
+    if auth_systems == ['password']:
+      password_only = True
+  else:
+    show_password = False
+    password_login_form = None
+
+  return_url = reverse(one_election_cast_confirm, args=[election.uuid])
+  login_box = auth_views.login_box_raw(request, return_url=return_url, auth_systems = auth_systems)
+
   return render_template(request, 'election_view',
                          {'election' : election, 'trustees': trustees, 'admin_p': admin_p, 'user': user,
                           'voter': voter, 'votes': votes, 'notregistered': notregistered, 'eligible_p': eligible_p,
                           'can_feature_p': can_feature_p, 'election_url' : election_url, 
                           'vote_url': vote_url, 'election_badge_url' : election_badge_url,
-                          'show_result': show_result,
+                          'show_result': show_result, 'login_box': login_box,
                           'test_cookie_url': test_cookie_url})
 
 def test_cookie(request):

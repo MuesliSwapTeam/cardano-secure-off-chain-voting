@@ -3,7 +3,7 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta charset="UTF-8">
-  <title>Helios Voting Booth</title>
+  <title>MuesliSwap Voting Booth</title>
   <link rel="stylesheet" type="text/css" href="css/booth.css" />
   <link rel="stylesheet" type="text/css" href="css/forms.css" />
 
@@ -31,7 +31,7 @@
 <body>
 <div id="wrapper">
 <div id="banner" class="edge">
-  <div style="text-align:center; width: 100%;">Helios Voting Booth
+  <div style="text-align:center; width: 100%;">MuesliSwap Voting Booth
       <div style="float: right; margin-right: 10px; font-size: 0.8em;"><span><a href="javascript:BOOTH.exit();">exit</a></span></div>
   </div>
 </div>
@@ -376,7 +376,7 @@ BOOTH.load_and_setup_election = function(election_url, pkh, skh) {
     $.get(election_url, function(raw_json) {
         // let's also get the metadata
         $.getJSON(election_url + "/meta", {}, function(election_metadata) {
-            $.getJSON(election_url + "/snapshot/" + pkh + "/" + skh, {}, function(snapshot_data) {
+            $.getJSON(election_url + "/snapshot/" + skh, {}, function(snapshot_data) {
                 BOOTH.election_metadata = election_metadata;
                 BOOTH.setup_election(raw_json, election_metadata);
                 BOOTH.show_election();
